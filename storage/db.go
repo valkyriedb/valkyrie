@@ -72,6 +72,14 @@ func (db *DB) ArrayFloat(key string) *ArrayQuery[float64] {
 	return aq
 }
 
+func (db *DB) ArrayBool(key string) *ArrayQuery[bool] {
+	aq := &ArrayQuery[bool]{
+		DB:  db,
+		key: key,
+	}
+	return aq
+}
+
 func (db *DB) ArrayBlob(key string) *ArrayQuery[[]byte] {
 	aq := &ArrayQuery[[]byte]{
 		DB:  db,

@@ -95,7 +95,7 @@ func TestKeys(t *testing.T) {
 	if err != nil {
 		t.Fatalf("could not get keys: %v", err)
 	}
-	if slices.Equal(keys, got) {
+	if !slices.Equal(keys, got) {
 		t.Errorf("got %v, expected %v", got, keys)
 	}
 }
@@ -120,7 +120,7 @@ func TestValues(t *testing.T) {
 	if err != nil {
 		t.Fatalf("could not get keys: %v", err)
 	}
-	if slices.Equal(values, got) {
+	if !slices.Equal(values, got) {
 		t.Errorf("got %v, expected %v", got, values)
 	}
 }

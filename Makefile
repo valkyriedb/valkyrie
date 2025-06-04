@@ -1,5 +1,7 @@
-include .env
-export $(shell sed 's/=.*//' .env)
+ENV_FILE := $(if $(wildcard .env),.env,.example.env)
+
+include $(ENV_FILE)
+export $(shell sed 's/=.*//' $(ENV_FILE))
 
 build:
 	go build -C cmd/valkyrie-db/ -o ../../bin/valkyrie-db

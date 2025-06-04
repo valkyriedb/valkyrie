@@ -6,10 +6,10 @@ COPY . .
 
 RUN go mod download
 
-RUN go build -C cmd/db/ -ldflags="-w -s" -o /go/bin/
+RUN go build -C cmd/valkyrie-db/ -ldflags="-w -s" -o /go/bin/
 
 FROM alpine
 
-COPY --from=builder /go/bin/db /go/bin/app
+COPY --from=builder /go/bin/valkyrie-db /go/bin/app
 
 CMD ["/go/bin/app"]

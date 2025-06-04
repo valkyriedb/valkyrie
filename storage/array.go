@@ -35,8 +35,7 @@ func (aq *ArrayQuery[T]) Insert(index int, elems ...T) error {
 		return ErrOutOfRange
 	}
 
-	array = append(array[:index], append(elems, array[index:]...)...)
-
+	array = slices.Insert(array, index, elems...)
 	aq.DB.syncMap.Store(aq.key, array)
 	return nil
 }

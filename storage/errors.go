@@ -1,9 +1,9 @@
 package storage
 
-import "fmt"
+import "errors"
 
 var (
-	ErrWrongType  = fmt.Errorf("value of wrong type")
-	ErrNotFound   = fmt.Errorf("value not found")
-	ErrOutOfRange = fmt.Errorf("index out of range")
+	ErrWrongType  = errors.New("value of wrong type")
+	ErrNotFound   = errors.New("value not found")
+	ErrOutOfRange = errors.New("index out of range")
 )

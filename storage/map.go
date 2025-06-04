@@ -22,14 +22,16 @@ func (mq *MapQuery[T]) Get(key string) (T, error) {
 func (mq *MapQuery[T]) Set(key string, value T) error {
 	m, err := mq.getMap()
 	if err != nil {
-		return err
-	}
-	if m == nil {
-		m = make(map[string]T)
+		if err == ErrNotFound {
+			m = make(map[string]T)
+			mq.DB.syncMap.Store(mq.key, m)
+		} else {
+			return err
+		}
 	}
 
 	m[key] = value
-	return err
+	return nil
 }
 
 func (mq *MapQuery[T]) Remove(key string) (T, error) {

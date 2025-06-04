@@ -14,10 +14,7 @@ func (aq *ArrayQuery[T]) Slice(left int, right int) ([]T, error) {
 		return nothing, err
 	}
 
-	if left >= len(array) {
-		return nothing, ErrOutOfRange
-	}
-	if right > len(array) {
+	if valid := isValidRange(left, right, len(array)); !valid {
 		return nothing, ErrOutOfRange
 	}
 
@@ -34,14 +31,11 @@ func (aq *ArrayQuery[T]) Insert(index int, elems ...T) error {
 		}
 	}
 
-	if index < 0 && index >= len(array) {
+	if index < 0 || index > len(array) {
 		return ErrOutOfRange
 	}
 
-	for _, elem := range elems {
-		array[index] = elem
-		index++
-	}
+	array = append(array[:index], append(elems, array[index:]...)...)
 
 	aq.DB.syncMap.Store(aq.key, array)
 	return nil
@@ -54,15 +48,13 @@ func (aq *ArrayQuery[T]) Remove(left int, right int) ([]T, error) {
 		return nothing, err
 	}
 
-	if left < 0 || left >= len(array) {
-		return nothing, ErrOutOfRange
-	}
-	if right < 0 || right > len(array) {
+	if valid := isValidRange(left, right, len(array)); !valid {
 		return nothing, ErrOutOfRange
 	}
 
-	removed := slices.Delete(array, left, right)
-	aq.DB.syncMap.Store(aq.key, removed)
+	removed := make([]T, right-left)
+	copy(removed, array[left:right])
+	aq.DB.syncMap.Store(aq.key, slices.Delete(array, left, right))
 	return removed, nil
 }
 
@@ -90,4 +82,17 @@ func (aq *ArrayQuery[T]) getArray() ([]T, error) {
 		return nothing, ErrWrongType
 	}
 	return array, nil
+}
+
+func isValidRange(left int, right int, length int) bool {
+	if left < 0 || left > length {
+		return false
+	}
+	if right < 0 || right > length {
+		return false
+	}
+	if left > right {
+		return false
+	}
+	return true
 }

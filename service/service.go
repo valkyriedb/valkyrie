@@ -144,6 +144,362 @@ func (s Service) Do(req message.Request) message.Response {
 				return message.NewResponse(v)
 			}
 		}
+
+	case datatype.Array:
+		switch req.Primitive {
+		case datatype.Bool:
+			q := s.db.ArrayBool(req.Key)
+			switch req.Op {
+			case op.Remove:
+				v, err := q.Remove(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Insert:
+				err := q.Insert(req.Idx, req.Value.([]bool)...)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Len:
+				l, err := q.Len()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(l)
+			case op.Slice:
+				v, err := q.Slice(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+
+		case datatype.Int:
+			q := s.db.ArrayInt(req.Key)
+			switch req.Op {
+			case op.Remove:
+				v, err := q.Remove(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Insert:
+				err := q.Insert(req.Idx, req.Value.([]int64)...)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Len:
+				l, err := q.Len()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(l)
+			case op.Slice:
+				v, err := q.Slice(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+
+		case datatype.Float:
+			q := s.db.ArrayFloat(req.Key)
+			switch req.Op {
+			case op.Remove:
+				v, err := q.Remove(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Insert:
+				err := q.Insert(req.Idx, req.Value.([]float64)...)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Len:
+				l, err := q.Len()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(l)
+			case op.Slice:
+				v, err := q.Slice(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+
+		case datatype.String:
+			q := s.db.ArrayString(req.Key)
+			switch req.Op {
+			case op.Remove:
+				v, err := q.Remove(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Insert:
+				err := q.Insert(req.Idx, req.Value.([]string)...)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Len:
+				l, err := q.Len()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(l)
+			case op.Slice:
+				v, err := q.Slice(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+
+		case datatype.Blob:
+			q := s.db.ArrayBlob(req.Key)
+			switch req.Op {
+			case op.Remove:
+				v, err := q.Remove(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Insert:
+				err := q.Insert(req.Idx, req.Value.([][]byte)...)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Len:
+				l, err := q.Len()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(l)
+			case op.Slice:
+				v, err := q.Slice(req.Idx, req.Idx2)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+		}
+
+	case datatype.Map:
+		switch req.Primitive {
+		case datatype.Bool:
+			q := s.db.MapBool(req.Key)
+			switch req.Op {
+			case op.Get:
+				v, err := q.Get(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Set:
+				err := q.Set(req.MapKey, req.Value.(bool))
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Remove:
+				v, err := q.Remove(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Contains:
+				ok, err := q.Contains(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(ok)
+			case op.Keys:
+				v, err := q.Keys()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Values:
+				v, err := q.Values()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+
+		case datatype.Int:
+			q := s.db.MapInt(req.Key)
+			switch req.Op {
+			case op.Get:
+				v, err := q.Get(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Set:
+				err := q.Set(req.MapKey, req.Value.(int64))
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Remove:
+				v, err := q.Remove(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Contains:
+				ok, err := q.Contains(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(ok)
+			case op.Keys:
+				v, err := q.Keys()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Values:
+				v, err := q.Values()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+
+		case datatype.Float:
+			q := s.db.MapFloat(req.Key)
+			switch req.Op {
+			case op.Get:
+				v, err := q.Get(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Set:
+				err := q.Set(req.MapKey, req.Value.(float64))
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Remove:
+				v, err := q.Remove(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Contains:
+				ok, err := q.Contains(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(ok)
+			case op.Keys:
+				v, err := q.Keys()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Values:
+				v, err := q.Values()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+
+		case datatype.String:
+			q := s.db.MapString(req.Key)
+			switch req.Op {
+			case op.Get:
+				v, err := q.Get(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Set:
+				err := q.Set(req.MapKey, req.Value.(string))
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Remove:
+				v, err := q.Remove(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Contains:
+				ok, err := q.Contains(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(ok)
+			case op.Keys:
+				v, err := q.Keys()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Values:
+				v, err := q.Values()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+
+		case datatype.Blob:
+			q := s.db.MapBlob(req.Key)
+			switch req.Op {
+			case op.Get:
+				v, err := q.Get(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Set:
+				err := q.Set(req.MapKey, req.Value.([]byte))
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(nil)
+			case op.Remove:
+				v, err := q.Remove(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Contains:
+				ok, err := q.Contains(req.MapKey)
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(ok)
+			case op.Keys:
+				v, err := q.Keys()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			case op.Values:
+				v, err := q.Values()
+				if err != nil {
+					return message.DBErrToRes(err)
+				}
+				return message.NewResponse(v)
+			}
+		}
 	}
 
 	return message.Response{

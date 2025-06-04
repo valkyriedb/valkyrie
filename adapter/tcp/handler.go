@@ -85,6 +85,11 @@ func (h *Handler) handleConn(conn net.Conn) {
 	for {
 		err := h.auth(conn)
 		if err == nil {
+			_, err = conn.Write(message.Response{Status: status.OK}.ToBytes())
+			if err != nil {
+				l.Error("can't write to connection", logger.Err(err))
+				return
+			}
 			break
 		}
 
@@ -104,13 +109,13 @@ func (h *Handler) handleConn(conn net.Conn) {
 			if err != nil {
 				if netErr, ok := err.(net.Error); ok {
 					l.Error("can't read connection", logger.Err(netErr))
-					break
+					return
 				}
 
 				_, err = conn.Write(message.Response{Status: status.InvalidReq}.ToBytes())
 				if err != nil {
 					l.Error("can't write to connection", logger.Err(err))
-					break
+					return
 				}
 			}
 
@@ -118,7 +123,7 @@ func (h *Handler) handleConn(conn net.Conn) {
 			_, err = conn.Write(res.ToBytes())
 			if err != nil {
 				l.Error("can't write to connection", logger.Err(err))
-				break
+				return
 			}
 
 		case <-h.shutdown.ch:

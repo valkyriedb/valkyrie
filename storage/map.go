@@ -24,6 +24,9 @@ func (mq *MapQuery[T]) Set(key string, value T) error {
 	if err != nil {
 		return err
 	}
+	if m == nil {
+		m = make(map[string]T)
+	}
 
 	m[key] = value
 	return err

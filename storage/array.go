@@ -29,6 +29,9 @@ func (aq *ArrayQuery[T]) Insert(index int, elems ...T) error {
 	if err != nil {
 		return err
 	}
+	if array == nil {
+		array = make([]T, 0)
+	}
 
 	if index < 0 && index >= len(array) {
 		return ErrOutOfRange

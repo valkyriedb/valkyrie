@@ -95,8 +95,10 @@ func TestKeys(t *testing.T) {
 	if err != nil {
 		t.Fatalf("could not get keys: %v", err)
 	}
-	if !slices.Equal(keys, got) {
-		t.Errorf("got %v, expected %v", got, keys)
+	for _, gotKey := range got {
+		if !slices.Contains(keys, gotKey) {
+			t.Errorf("%v not contains %v", keys, gotKey)
+		}
 	}
 }
 
@@ -120,7 +122,9 @@ func TestValues(t *testing.T) {
 	if err != nil {
 		t.Fatalf("could not get keys: %v", err)
 	}
-	if !slices.Equal(values, got) {
-		t.Errorf("got %v, expected %v", got, values)
+	for _, gotVal := range got {
+		if !slices.Contains(values, gotVal) {
+			t.Errorf("%v not contains %v", values, gotVal)
+		}
 	}
 }

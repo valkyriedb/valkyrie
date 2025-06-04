@@ -22,7 +22,7 @@ jobs:
       - name: Build Go application
         run: |
           go mod tidy
-          go build -o app .
+          go build -C cmd/valkyrie-db/ -o ../../bin/valkyrie-db
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3

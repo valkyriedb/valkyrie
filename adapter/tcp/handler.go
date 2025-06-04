@@ -1,14 +1,24 @@
 package tcp
 
 import (
+	"errors"
 	"log/slog"
 	"net"
 	"sync"
 
+	"github.com/valkyriedb/valkyrie/adapter/message"
+	"github.com/valkyriedb/valkyrie/adapter/message/status"
+	decode "github.com/valkyriedb/valkyrie/internal/decoder"
 	"github.com/valkyriedb/valkyrie/internal/logger"
+	"github.com/valkyriedb/valkyrie/service"
 )
 
+var ErrWrongPassword = errors.New("wrong password")
+
 type Handler struct {
+	srv      service.Service
+	password string
+
 	lstn     net.Listener
 	shutdown struct {
 		ch chan struct{}
@@ -17,7 +27,7 @@ type Handler struct {
 	log *slog.Logger
 }
 
-func NewHandler(address string, log *slog.Logger) (*Handler, error) {
+func NewHandler(srv service.Service, password, address string, log *slog.Logger) (*Handler, error) {
 	lstn, err := net.Listen("tcp", address)
 	if err != nil {
 		return nil, err
@@ -72,19 +82,42 @@ func (h *Handler) handleConn(conn net.Conn) {
 
 	l.Info("accepted new connection")
 
-	buf := make([]byte, 1024)
+	for {
+		err := h.auth(conn)
+		if err == nil {
+			break
+		}
+
+		_, err = conn.Write(message.Response{
+			Status: status.Unauth,
+		}.ToBytes())
+		if err != nil {
+			l.Error("can't write to connection", logger.Err(err))
+			return
+		}
+	}
+
 	for {
 		select {
 		default:
-			n, err := conn.Read(buf)
+			req, err := message.ReadRequest(conn)
 			if err != nil {
-				l.Error("can't read data", logger.Err(err))
-				break
+				if netErr, ok := err.(net.Error); ok {
+					l.Error("can't read connection", logger.Err(netErr))
+					break
+				}
+
+				_, err = conn.Write(message.Response{Status: status.InvalidReq}.ToBytes())
+				if err != nil {
+					l.Error("can't write to connection", logger.Err(err))
+					break
+				}
 			}
 
-			_, err = conn.Write(buf[:n])
+			res := h.srv.Do(req)
+			_, err = conn.Write(res.ToBytes())
 			if err != nil {
-				l.Error("can't write data", logger.Err(err))
+				l.Error("can't write to connection", logger.Err(err))
 				break
 			}
 
@@ -96,4 +129,17 @@ func (h *Handler) handleConn(conn net.Conn) {
 			return
 		}
 	}
+}
+
+func (h *Handler) auth(conn net.Conn) error {
+	reqPass, err := decode.String(conn)
+	if err != nil {
+		return err
+	}
+
+	if reqPass != h.password {
+		return ErrWrongPassword
+	}
+
+	return nil
 }

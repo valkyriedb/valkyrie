@@ -27,10 +27,11 @@ func (aq *ArrayQuery[T]) Slice(left int, right int) ([]T, error) {
 func (aq *ArrayQuery[T]) Insert(index int, elems ...T) error {
 	array, err := aq.getArray()
 	if err != nil {
-		return err
-	}
-	if array == nil {
-		array = make([]T, 0)
+		if err == ErrNotFound {
+			array = make([]T, 0)
+		} else {
+			return err
+		}
 	}
 
 	if index < 0 && index >= len(array) {
@@ -74,7 +75,7 @@ func (aq *ArrayQuery[T]) Len() (int, error) {
 }
 
 func (aq *ArrayQuery[T]) Clear() {
-	aq.DB.syncMap.Store(aq.key, nil)
+	aq.DB.syncMap.Delete(aq.key)
 }
 
 func (aq *ArrayQuery[T]) getArray() ([]T, error) {
